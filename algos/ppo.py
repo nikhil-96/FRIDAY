@@ -28,6 +28,7 @@ config["env_config"] = {"robot": robot, "grid": grid}
 config["recreate_failed_workers"] = True
 config["gamma"] = gamma
 config["lr"] = lr
+config["clip_param"] = 0.2
 
 PPO_trainer = ppo.PPOTrainer(env=FridayCleaning, config=config)
 
@@ -35,7 +36,7 @@ checkpoint_path = f"../checkpoints/checkpoint{str(config['lr']).replace('.','')}
 train_losses = []
 train_rewards = []
 # trainer.train()
-for i in tqdm(range(1)):
+for i in tqdm(range(200)):
     # Perform one iteration of training the policy with PPO
     result = PPO_trainer.train()
     # print(result))

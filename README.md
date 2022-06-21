@@ -1,7 +1,7 @@
 # 2AMC15-DIC (Vacuum Cleaning Robot - FRIDAY)
 
 ## About this project
-2AMC15 Data Intelligence Challenge Vacuum cleaning robot (Roomba) using Reinforcement Learning (RL). For this assignment, we 
+2AMC15 Data Intelligence Challenge Vacuum cleaning robot (FRIDAY) using Reinforcement Learning (RL). For this assignment, we 
 created the environment with continuous action space (based on angle) using OpenAI Gym library and used PPO-clip RL algorithm
 (hyper-parameters tuned) which is provided by Ray framework.
 
@@ -48,7 +48,6 @@ Run this app locally with (inside A3_PPO/algos folder):
     │   ├── grid.py                  
     │   ├── parser.py              # parse the house.grid file
     │   ├── robot.py                # initialize robot
-    │   ├── square.py               # get dirt area to calculate cleaning percentage
     ├── checkpoints
     ├── input.py                    # command-line input
     ├── setup.py                    # Set hierarchical directory structure
