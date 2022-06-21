@@ -22,16 +22,18 @@ for 10 epochs.
 2) On your local machine:
 
 Install all required packages by running:
-
-- pip install -r requirements.txt
-- pip install ray[rllib]
-- From the A3_PPO folder, run "pip install -e ." to setup directory structure
+```
+> pip install -r requirements.txt
+> pip install ray[rllib]
+> From the A3_PPO folder, run "pip install -e ." to setup directory structure
+```
 
 Run this app locally with (inside A3_PPO/demos folder):
-
-- python ppo.py (inside A3_PPO/demos folder) - This will take default hyper-parameters (lr=1e-4 and gamma=0.99)
-- python ppo.py --lr <learning-rate> --gamma <gamma> (inside A3_PPO/demos folder) - If you want to tune hyper-parameters
-- python ppo.py --help (To get more info)
+```
+> python ppo.py (inside A3_PPO/demos folder) - This will take default hyper-parameters (lr=1e-4 and gamma=0.99)
+> python ppo.py --lr <learning-rate> --gamma <gamma> (inside A3_PPO/demos folder) - If you want to tune hyper-parameters
+> python ppo.py --help (To get more info)
+```
 
 ## Code Structure
 
@@ -57,7 +59,7 @@ Run this app locally with (inside A3_PPO/demos folder):
 
 ## Resources
 
-* [Dash](https://dash.plotly.com/)
-* [Plotly](https://plotly.com/python/)
-* [CSS](https://codepen.io/chriddyp/pen/bWLwgP.css)
-* [BOOTSTRAP](https://bootswatch.com/lux/)
+* [OpenAI Gym](https://www.gymlibrary.ml/content/environment_creation/)
+* [PPO algorithm](https://spinningup.openai.com/en/latest/algorithms/ppo.html)
+* [Ray PPOtrainer](https://docs.ray.io/en/latest/rllib/rllib-algorithms.html#proximal-policy-optimization-ppo)
+* [PPO Research Paper](https://arxiv.org/abs/1707.06347)
