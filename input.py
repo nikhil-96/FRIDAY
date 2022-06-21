@@ -2,8 +2,8 @@ import sys
 import getopt
 
 def input(argv):
-    arg_lr = "0.0001"
-    arg_gamma = "0.99"
+    arg_lr = 0.0001
+    arg_gamma = 0.99
     arg_help = "{0} --lr <learning-rate> --gamma <gamma>".format(argv[0])
 
     try:

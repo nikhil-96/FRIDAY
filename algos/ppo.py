@@ -77,7 +77,7 @@ test_reward = []
 for epoch in tqdm(range(10)):
     env = FridayCleaning(dict(robot=robot, grid=grid))
     obs = env.reset()
-    #env.render()
+    env.render()
     running_reward = 0.0
     initial_dust_area = sum([get_area(patch) for patch in env.grid.dirt_places]) + \
                         sum([get_area(patch) for patch in env.grid.much_dirt_places]) + sum([get_area(patch) for patch in env.grid.reg_dirt])
@@ -86,7 +86,7 @@ for epoch in tqdm(range(10)):
     while not done:
         move = PPO_trainer.compute_action(obs)
         obs, reward, done, info = env.step(move)
-        #env.render()
+        env.render()
         #print(f"move: {move/(2*np.pi)*360}, reward: {reward}")
         running_reward += reward
         s += 1
