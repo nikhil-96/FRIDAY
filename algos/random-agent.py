@@ -8,14 +8,13 @@ import ray.rllib.agents.ppo as ppo
 from ray.tune.logger import pretty_print
 import matplotlib.pyplot as plt
 #
-from main.continuous import FloorCleaning
+from main.continuous import FridayCleaning
 from main.robot import Robot
-from main.parsing import parse_config
-from main.square import get_area
+from main.parser import parse_config, get_area
 from input import input
 #
 # parent_path = Path(".").resolve().parent
-grid = parse_config(Path("../grids") / "example.grid")
+grid = parse_config(Path("../grids") / "house.grid")
 
 robot = Robot(init_position=(0, 8))
 
@@ -23,7 +22,7 @@ test_cleaning = []
 test_reward = []
 
 for epoch in tqdm(range(10)):
-    env = FloorCleaning(dict(robot=robot, grid=grid))
+    env = FridayCleaning(dict(robot=robot, grid=grid))
     obs = env.reset()
     #env.render()
     running_reward = 0.0

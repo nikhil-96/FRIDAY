@@ -11,7 +11,7 @@ You can run our project in two ways =>
 1) Using Google Colab:
 ```
 > Upload the complete A3_PPO folder in your drive
-> Open the ppo_clip.ipynb file which is inside A3_PPO/demos folder from your drive.
+> Open the ppo_clip.ipynb file which is inside A3_PPO/algos folder from your drive.
 > It will open the file in Google Colab environment. Change the path in Code block 3 to your A3_PPO folder
 and then run (Runtime->Run all). It will start training the model for 200 epochs (dynamic environment at every epoch) and 
 plot the losses and rewards. It will also save the trained model in checkpoints folder for further use. The code will then 
@@ -24,30 +24,29 @@ for 10 epochs.
 Install all required packages by running:
 ```
 > pip install -r requirements.txt
-> pip install ray[rllib]
 > From the A3_PPO folder, run "pip install -e ." to setup directory structure
 ```
 
-Run this app locally with (inside A3_PPO/demos folder):
+Run this app locally with (inside A3_PPO/algos folder):
 ```
-> python ppo.py (inside A3_PPO/demos folder) - This will take default hyper-parameters (lr=1e-4 and gamma=0.99)
-> python ppo.py --lr <learning-rate> --gamma <gamma> (inside A3_PPO/demos folder) - If you want to tune hyper-parameters
+> python ppo.py (inside A3_PPO/algos folder) - This will take default hyper-parameters (lr=1e-4 and gamma=0.99)
+> python ppo.py --lr <learning-rate> --gamma <gamma> (inside A3_PPO/algos folder) - If you want to tune hyper-parameters
 > python ppo.py --help (To get more info)
 ```
 
 ## Code Structure
 
     A3_PPO
-    ├── demos                        # It contains all the algorithms
+    ├── algos                        # It contains all the algorithms
     │   ├── ppo.py                  # PPO agent
     │   ├── ppo_clip.ipynb          # PPO agent (Colab Notebook)
     │   └── random-agent.py         # Random agent
     ├── grids                      
-    │   ├── example.grid             # Our house grid file
+    │   ├── house.grid             # Our house grid file
     ├── main                        
     │   ├── continuous.py            # create environment according to OpenAI gym format for our house grid
     │   ├── grid.py                  
-    │   ├── parsing.py              # parse the example.grid file
+    │   ├── parser.py              # parse the house.grid file
     │   ├── robot.py                # initialize robot
     │   ├── square.py               # get dirt area to calculate cleaning percentage
     ├── checkpoints

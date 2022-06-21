@@ -1,10 +1,11 @@
 import ast
 
-from main.grid import Grid
+from main.grid import Grid, Square
 
 def parse_config(file):
     with open(file, 'r') as f:
         data = f.read().split('\n')
+        # print(data)
         if len(data) == 0:
             raise ValueError('Config file does not contain any lines!')
         else:
@@ -32,6 +33,11 @@ def parse_config(file):
                                 grid.put_much_dirt(*ast.literal_eval(coords))
                             elif typ == 'death':
                                 grid.put_death(*ast.literal_eval(coords))
+                            elif typ == 'reg_dirt':
+                                grid.put_reg_dirt(*ast.literal_eval(coords))
                             else:
                                 raise ValueError(f"Unkown type '{typ}'.")
             return grid
+
+def get_area(square: Square):
+    return (square.x2 - square.x1)*(square.y2 - square.y1)

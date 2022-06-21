@@ -7,11 +7,10 @@ from gym import spaces
 from matplotlib import pyplot as plt
 
 from main.robot import Robot
-from main.parsing import parse_config
+from main.parser import parse_config
 
 
-class FloorCleaning(Env):
-    # TODO: perhaps it's best to not pass the grid and robot objects on construction
+class FridayCleaning(Env):
     def __init__(self, config):
         self.rendering_init = False
         grid = config["grid"]
@@ -225,6 +224,6 @@ if __name__ == "__main__":
     from gym.utils.env_checker import check_env
 
     # Check if the environment conforms to the Gym API
-    grid = parse_config(Path("../grids") / "example.grid")
+    grid = parse_config(Path("../grids") / "house.grid")
     robot = Robot(init_position=(0, 8))
-    check_env(FloorCleaning(grid, robot))
+    check_env(FridayCleaning(grid, robot))

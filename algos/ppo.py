@@ -3,39 +3,39 @@ import getopt
 import numpy as np
 from pathlib import Path
 from tqdm import tqdm
+from sklearn import tree
 import ray
 import ray.rllib.agents.ppo as ppo
 from ray.tune.logger import pretty_print
 import matplotlib.pyplot as plt
 #
-from main.continuous import FloorCleaning
+from main.continuous import FridayCleaning
 from main.robot import Robot
-from main.parsing import parse_config
-from main.square import get_area
+from main.parser import parse_config, get_area
 from input import input
 #
 # parent_path = Path(".").resolve().parent
-grid = parse_config(Path("../grids") / "example.grid")
+grid = parse_config(Path("../grids") / "house.grid")
 
 lr, gamma = input(sys.argv)
 robot = Robot(init_position=(0, 8))
 ray.shutdown()
 ray.init()
 config = ppo.DEFAULT_CONFIG.copy()
-config["num_gpus"] = 1
-config["num_workers"] = 2
+config["num_gpus"] = 0
+config["num_workers"] = 1
 config["env_config"] = {"robot": robot, "grid": grid}
 config["recreate_failed_workers"] = True
 config["gamma"] = gamma
 config["lr"] = lr
 
-PPO_trainer = ppo.PPOTrainer(env=FloorCleaning, config=config)
+PPO_trainer = ppo.PPOTrainer(env=FridayCleaning, config=config)
 
 checkpoint_path = f"../checkpoints/checkpoint{str(config['lr']).replace('.','')}_{str(config['gamma']).replace('.','')}"
 train_losses = []
 train_rewards = []
 # trainer.train()
-for i in tqdm(range(200)):
+for i in tqdm(range(1)):
     # Perform one iteration of training the policy with PPO
     result = PPO_trainer.train()
     # print(result))
@@ -75,7 +75,7 @@ test_cleaning = []
 test_reward = []
 
 for epoch in tqdm(range(10)):
-    env = FloorCleaning(dict(robot=robot, grid=grid))
+    env = FridayCleaning(dict(robot=robot, grid=grid))
     obs = env.reset()
     #env.render()
     running_reward = 0.0
