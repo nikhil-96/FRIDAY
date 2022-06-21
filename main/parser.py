@@ -3,6 +3,11 @@ import ast
 from main.grid import Grid, Square
 
 def parse_config(file):
+    """
+    Returns Grid object initialized with environment defined in input file
+
+    @file: Input file defining environment
+    """
     with open(file, 'r') as f:
         data = f.read().split('\n')
         # print(data)
@@ -40,4 +45,9 @@ def parse_config(file):
             return grid
 
 def get_area(square: Square):
+    """
+    Return the area of Square object
+
+    @square: Square object with defined boundries 
+    """
     return (square.x2 - square.x1)*(square.y2 - square.y1)

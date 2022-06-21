@@ -11,6 +11,11 @@ from main.parser import parse_config
 
 
 class FridayCleaning(Env):
+    """
+    Implements the Gym interface for defining an enviromnet. 
+    Defines the functions of the robot and that help it interact with the environment.
+    """
+    
     def __init__(self, config):
         self.rendering_init = False
         grid = config["grid"]
@@ -78,11 +83,11 @@ class FridayCleaning(Env):
         new_box.update_pos(*new_pos)
 
         if self._grid.is_blocked(new_box):
-            return self._make_observation(), self.reward_structure["obstacle"], False, {}
+            return self._get_vision(), self.reward_structure["obstacle"], False, {}
         elif self._grid.is_wall(new_box):
-            return self._make_observation(), self.reward_structure["wall"], False, {}
+            return self._get_vision(), self.reward_structure["wall"], False, {}
         elif not self._grid.is_in_bounds(new_pos[0], new_pos[1], self._robot.size, self._robot.size):
-            return self._make_observation(), self.reward_structure["wall"], False, {}
+            return self._get_vision(), self.reward_structure["wall"], False, {}
         else:
             do_battery_drain = np.random.binomial(1, self._robot.battery_drain_p)
 
@@ -92,7 +97,7 @@ class FridayCleaning(Env):
                     self._robot.alive = False
                     self._robot.battery_lvl = 0
 
-                    return self._make_observation(), self.reward_structure["regular"], True, {"reason": "battery drain"}
+                    return self._get_vision(), self.reward_structure["regular"], True, {"reason": "battery drain"}
 
             del new_box
             self._robot.pos = new_pos
@@ -101,64 +106,69 @@ class FridayCleaning(Env):
             # What to do if the robot made a valid move with enough battery:
             if self._grid.check_delete_goals(self._robot) and len(self._grid.goals) == 0:
                 self._robot.alive = False
-                return self._make_observation(), self.reward_structure["goal"], True, {"reason": "goals cleared"}
+                return self._get_vision(), self.reward_structure["goal"], True, {"reason": "goals cleared"}
             elif self._grid.check_death(self._robot):
                 self._robot.alive = False
-                return self._make_observation(), self.reward_structure["death"], True, {"reason": "died"}
+                return self._get_vision(), self.reward_structure["death"], True, {"reason": "died"}
             elif self._grid.check_delete_goals(self._robot) and len(self._grid.goals) > 0:
-                return self._make_observation(), self.reward_structure["goal"], False, {}
+                return self._get_vision(), self.reward_structure["goal"], False, {}
             elif self._grid.check_delete_dirt(self._robot):
-                return self._make_observation(), self.reward_structure["dirt"], False, {}
+                return self._get_vision(), self.reward_structure["dirt"], False, {}
             elif self._grid.check_delete_reg_dirt(self._robot):
-                return self._make_observation(), self.reward_structure["reg_dirt"], False, {}
+                return self._get_vision(), self.reward_structure["reg_dirt"], False, {}
             elif self._grid.check_delete_much_dirt(self._robot):
-                return self._make_observation(), self.reward_structure["much_dirt"], False, {}
+                return self._get_vision(), self.reward_structure["much_dirt"], False, {}
             else:
-                return self._make_observation(), self.reward_structure["regular"], False, {}
+                return self._get_vision(), self.reward_structure["regular"], False, {}
 
-    def _make_observation(self):
+    def _get_vision(self):
+        """
+        Returns the distance of the given point (robot) to obstacles and walls in four
+        directions.
+        """
         robot_center = (self._robot.bounding_box.x1 + self._robot.bounding_box.x2) / 2, \
                        (self._robot.bounding_box.y1 + self._robot.bounding_box.y2) / 2
         # Compute the distances (n, e, s, w) to either obstacles or walls depending on which one comes first
-        distances_to_obstacles = self._get_distances_from_reference(
+        distances_to_obstacles = self._get_distance_from_robot(
             reference_point=robot_center,
             squares=self._grid.obstacles,
             fallback_n=robot_center[1],
             fallback_e=self._grid.width - robot_center[0],
             fallback_s=self._grid.height - robot_center[1],
-            fallback_w=robot_center[0]
-        )
+            fallback_w=robot_center[0])
+
         # Compute the distances to patches. If there are none, the sensor would return the maximum visible distance.
-        distances_to_patches = self._get_distances_from_reference(
+        distances_to_patches = self._get_distance_from_robot(
             reference_point=robot_center,
             squares=self._grid.goals,
             fallback_n=distances_to_obstacles[0],
             fallback_e=distances_to_obstacles[1],
             fallback_s=distances_to_obstacles[2],
-            fallback_w=distances_to_obstacles[3]
-        )
+            fallback_w=distances_to_obstacles[3])
+
 
         return {
             "distances to borders": np.array(distances_to_obstacles),
-            "distances to patches": np.array(distances_to_patches)
-        }
+            "distances to patches": np.array(distances_to_patches)}
 
     @staticmethod
-    def _get_distances_from_reference(reference_point, squares, fallback_n, fallback_e, fallback_s, fallback_w):
-        distances_e = [ob.x1 - reference_point[0] for ob in squares
-                       if ob.y1 <= reference_point[1] <= ob.y2 and ob.x1 >= reference_point[0]]
-        distances_w = [reference_point[0] - ob.x2 for ob in squares
-                       if ob.y1 <= reference_point[1] <= ob.y2 and ob.x2 <= reference_point[0]]
-        distances_n = [reference_point[1] - ob.y2 for ob in squares
-                       if ob.x1 <= reference_point[0] <= ob.x2 and ob.y2 <= reference_point[1]]
-        distances_s = [ob.y1 - reference_point[1] for ob in squares
-                       if ob.x1 <= reference_point[0] <= ob.x2 and ob.y1 >= reference_point[1]]
-        nearest_distance_e = fallback_e if not distances_e else min(distances_e)
-        nearest_distance_w = fallback_w if not distances_w else min(distances_w)
-        nearest_distance_n = fallback_n if not distances_n else min(distances_n)
-        nearest_distance_s = fallback_s if not distances_s else min(distances_s)
+    def _get_distance_from_robot(reference_point, squares, fallback_n, fallback_e, fallback_s, fallback_w):
 
-        return nearest_distance_n, nearest_distance_e, nearest_distance_s, nearest_distance_w
+        dist_n = [reference_point[1] - ob.y2 for ob in squares
+                       if ob.x1 <= reference_point[0] <= ob.x2 and ob.y2 <= reference_point[1]]
+        dist_s = [ob.y1 - reference_point[1] for ob in squares
+                       if ob.x1 <= reference_point[0] <= ob.x2 and ob.y1 >= reference_point[1]]
+        dist_e = [ob.x1 - reference_point[0] for ob in squares
+                       if ob.y1 <= reference_point[1] <= ob.y2 and ob.x1 >= reference_point[0]]
+        dist_w = [reference_point[0] - ob.x2 for ob in squares
+                       if ob.y1 <= reference_point[1] <= ob.y2 and ob.x2 <= reference_point[0]]
+        
+        nearest_n = fallback_n if not dist_n else min(dist_n)
+        nearest_s = fallback_s if not dist_s else min(dist_s)               
+        nearest_e = fallback_e if not dist_e else min(dist_e)
+        nearest_w = fallback_w if not dist_w else min(dist_w)
+        
+        return nearest_n, nearest_e, nearest_s, nearest_w
 
     def render(self, mode="human"):
         if self.rendering_init == False:
@@ -197,23 +207,21 @@ class FridayCleaning(Env):
         for ob in self._grid.walls:
             plt.fill([ob.x1, ob.x2, ob.x2, ob.x1, ob.x1], [ob.y1, ob.y1, ob.y2, ob.y2, ob.y1], color='#121212', alpha = 0.5, linewidth = 0.0)
 
-
         robot_box = self._robot.bounding_box
         plt.plot(
             [robot_box.x1, robot_box.x2, robot_box.x2, robot_box.x1, robot_box.x1],
             [robot_box.y1, robot_box.y1, robot_box.y2, robot_box.y2, robot_box.y1],
-            color='blue'
-        )
+            color='blue')
+
         plt.title(f"Battery level: {str(round(self._robot.battery_lvl, 2))}")
         plt.draw()
         plt.pause(0.0001)
         plt.clf()
 
     def reset(self):
-        # TODO: select a random location for the robot
         self.__init__(dict(grid=self._original_grid, robot=self._original_robot))
 
-        return self._make_observation()
+        return self._get_vision()
 
     @property
     def grid(self):

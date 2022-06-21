@@ -6,6 +6,10 @@ import numpy as np
 
 
 class Grid:
+    """
+    Grid class defining attributes of the environemnt. Implements functions to set and get
+    attribues related to the environment.
+    """
     def __init__(self, width, height, p_random=0.0):
         self.p_random = p_random
         self.width = width
@@ -329,6 +333,9 @@ class Grid:
 
 
 class Square:
+    """
+    Utility class for grid, initializes rectangular objects and tracks interactions
+    """
     def __init__(self, x1, x2, y1, y2):
         self.x1, self.x2, self.y1, self.y2 = x1, x2, y1, y2
         self.x_size = x2 - x1

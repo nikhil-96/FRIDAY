@@ -2,6 +2,10 @@ from main.grid import Square
 
 
 class Robot:
+    """
+    Class defining attributes of the robot and its starting position
+    
+    """
     def __init__(self, init_position, size=1, battery_drain_p=0.2, battery_drain_lam=0.2, move_distance=1.0):
         self.move_distance = move_distance
         self.size = size
