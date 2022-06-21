@@ -9,14 +9,15 @@ created the environment with continuous action space (based on angle) using Open
 You can run our project in two ways =>
 
 1) Using Google Colab:
-
-- Upload the complete A3_PPO folder in your drive
-- Open the ppo_clip.ipynb file which is inside A3_PPO/demos folder from your drive.
-- It will open the file in Google Colab environment. Change the path in Code block 3 to your A3_PPO folder
+'''
+> Upload the complete A3_PPO folder in your drive
+> Open the ppo_clip.ipynb file which is inside A3_PPO/demos folder from your drive.
+> It will open the file in Google Colab environment. Change the path in Code block 3 to your A3_PPO folder
 and then run (Runtime->Run all). It will start training the model for 200 epochs (dynamic environment at every epoch) and 
 plot the losses and rewards. It will also save the trained model in checkpoints folder for further use. The code will then 
 test the trained model for 10 epochs (again different dynamically changed env) and print the rewards and cleaning percentage
 for 10 epochs.
+'''
 
 2) On your local machine:
 
